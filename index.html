@@ -75,6 +75,11 @@
             aria-controls="date-range-popover-modern"
             aria-expanded="false"
           >
+            <div class="modern-trigger-text">
+              <input class="modern-date-input" id="modern-start-input" type="text" inputmode="numeric" value="01/08/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data inicial do Modelo Moderno">
+              <span class="modern-arrow">➔</span>
+              <input class="modern-date-input" id="modern-end-input" type="text" inputmode="numeric" value="15/08/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data final do Modelo Moderno">
+            </div>
             <button class="modern-trigger-icon modern-calendar-toggle" type="button" aria-label="Abrir calendário do Modelo Moderno" aria-haspopup="dialog" aria-controls="date-range-popover-modern">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -83,12 +88,6 @@
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
             </button>
-            <div class="modern-trigger-text">
-              <input class="modern-date-input" id="modern-start-input" type="text" inputmode="numeric" value="01/08/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data inicial do Modelo Moderno">
-              <span class="modern-arrow">➔</span>
-              <input class="modern-date-input" id="modern-end-input" type="text" inputmode="numeric" value="15/08/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data final do Modelo Moderno">
-            </div>
-            <span class="modern-trigger-chevron" aria-hidden="true">▼</span>
           </div>
           <!-- Popover Container Opção 2 -->
           <div id="date-range-popover-modern"></div>
@@ -104,22 +103,20 @@
             id="date-range-trigger-h"
             aria-controls="date-range-popover-h"
             aria-expanded="false"
-            style="border-color: #0066FF; background: #EBF3FF;"
           >
+            <div class="modern-trigger-text">
+              <input class="modern-date-input" id="hierarchical-start-input" type="text" inputmode="numeric" value="01/02/2025" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data inicial do Modelo Hierárquico">
+              <span class="modern-arrow">➔</span>
+              <input class="modern-date-input" id="hierarchical-end-input" type="text" inputmode="numeric" value="31/07/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data final do Modelo Hierárquico">
+            </div>
             <button class="modern-trigger-icon modern-calendar-toggle" type="button" aria-label="Abrir calendário do Modelo Hierárquico" aria-haspopup="dialog" aria-controls="date-range-popover-h">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
             </button>
-            <div class="modern-trigger-text">
-              <input class="modern-date-input" id="hierarchical-start-input" type="text" inputmode="numeric" value="01/02/2025" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data inicial do Modelo Hierárquico">
-              <span class="modern-arrow">➔</span>
-              <input class="modern-date-input" id="hierarchical-end-input" type="text" inputmode="numeric" value="31/07/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data final do Modelo Hierárquico">
-            </div>
-            <span class="modern-trigger-chevron" aria-hidden="true">▼</span>
           </div>
           <!-- Popover Container Opção 3 -->
           <div id="date-range-popover-h"></div>
@@ -134,11 +131,11 @@
         <div>
           <span class="voting-eyebrow">Avaliação do protótipo</span>
           <h1 class="voting-title" id="voting-title">Qual modelo você prefere?</h1>
-          <p class="voting-description">Experimente os seletores acima e escolha a opção mais simples para o seu dia a dia.</p>
+          <p class="voting-description">Experimente os seletores acima e registre qual opção foi mais simples para o seu dia a dia.</p>
         </div>
-        <div class="voting-total" aria-live="polite">
-          <strong id="vote-total">0</strong>
-          <span id="vote-total-label">votos</span>
+        <div class="voting-total" aria-live="polite" aria-label="Total de votos registrados">
+          <strong id="vote-total">—</strong>
+          <span id="vote-total-label">votos registrados</span>
         </div>
       </div>
 
@@ -182,32 +179,77 @@
           <button class="vote-submit" id="vote-submit" type="submit" disabled>Confirmar voto</button>
         </div>
       </form>
+      <div class="voting-footer">
+        <span>Os resultados são reservados ao responsável pela avaliação.</span>
+        <button class="admin-access-button" id="admin-access-button" type="button">Ver relatório administrativo</button>
+      </div>
+    </section>
 
-      <div class="vote-results" id="vote-results" aria-label="Resultado da votação">
-        <div class="vote-result" data-result="1">
-          <div class="vote-result-heading">
-            <span><span class="option-badge opt-1">1</span> Modelo Duplo</span>
-            <strong><span class="vote-result-percent">0%</span> <small class="vote-result-count">0 votos</small></strong>
-          </div>
-          <div class="vote-result-track"><span class="vote-result-bar opt-1"></span></div>
+    <dialog class="vote-dialog" id="vote-dialog" aria-labelledby="vote-dialog-title">
+      <div class="admin-dialog-header">
+        <div>
+          <span class="voting-eyebrow">Confirmar participação</span>
+          <h2 id="vote-dialog-title">Conte um pouco sobre sua escolha</h2>
+          <p class="voting-description" id="vote-dialog-choice"></p>
         </div>
-        <div class="vote-result" data-result="2">
-          <div class="vote-result-heading">
-            <span><span class="option-badge opt-2">2</span> Modelo Moderno</span>
-            <strong><span class="vote-result-percent">0%</span> <small class="vote-result-count">0 votos</small></strong>
-          </div>
-          <div class="vote-result-track"><span class="vote-result-bar opt-2"></span></div>
+        <button class="admin-close-button" id="vote-dialog-close" type="button" aria-label="Fechar confirmação do voto">×</button>
+      </div>
+      <form class="vote-details-form" id="vote-details-form">
+        <label class="vote-field">
+          <span>Seu nome <strong aria-hidden="true">*</strong></span>
+          <input id="voter-name" name="voter-name" type="text" maxlength="80" autocomplete="name" required placeholder="Como podemos identificar seu voto?">
+        </label>
+        <label class="vote-field">
+          <span>Observação <small>(opcional)</small></span>
+          <textarea id="voter-note" name="voter-note" maxlength="500" rows="3" placeholder="Conte o que facilitou ou dificultou sua escolha."></textarea>
+        </label>
+        <span class="vote-status" id="vote-dialog-status" aria-live="polite"></span>
+        <div class="vote-dialog-actions">
+          <button class="admin-secondary-button" id="vote-dialog-cancel" type="button">Voltar</button>
+          <button class="vote-submit" id="vote-dialog-submit" type="submit">Registrar voto</button>
         </div>
-        <div class="vote-result" data-result="3">
-          <div class="vote-result-heading">
-            <span><span class="option-badge opt-3">3</span> Modelo Hierárquico</span>
-            <strong><span class="vote-result-percent">0%</span> <small class="vote-result-count">0 votos</small></strong>
-          </div>
-          <div class="vote-result-track"><span class="vote-result-bar opt-3"></span></div>
+      </form>
+    </dialog>
+
+    <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title">
+      <div class="admin-dialog-header">
+        <div>
+          <span class="voting-eyebrow">Área administrativa</span>
+          <h2 id="admin-dialog-title">Relatório da votação</h2>
+        </div>
+        <button class="admin-close-button" id="admin-close-button" type="button" aria-label="Fechar relatório">×</button>
+      </div>
+
+      <form class="admin-login" id="admin-login-form">
+        <label class="vote-field">
+          <span>Senha de acesso</span>
+          <input id="admin-password" type="password" autocomplete="current-password" required placeholder="Digite a senha combinada">
+        </label>
+        <button class="vote-submit" type="submit">Acessar relatório</button>
+        <span class="vote-status" id="admin-login-status" aria-live="polite"></span>
+      </form>
+
+      <div class="admin-report" id="admin-report" hidden>
+        <div class="admin-summary" id="admin-summary"></div>
+        <div class="admin-report-toolbar">
+          <span id="admin-report-updated"></span>
+          <button class="admin-secondary-button" id="admin-refresh-button" type="button">Atualizar</button>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Nome</th>
+                <th>Escolha</th>
+                <th>Observação</th>
+              </tr>
+            </thead>
+            <tbody id="admin-votes-body"></tbody>
+          </table>
         </div>
       </div>
-      <p class="voting-storage-note">Prévia local: nesta etapa, o voto e o resultado ficam salvos somente neste navegador.</p>
-    </section>
+    </dialog>
 
     <!-- Demo Output & UX Inspection Panel -->
     <section class="demo-card">

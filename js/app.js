@@ -87,108 +87,211 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeVoting() {
-  const storageKey = 'datarange-prototype-voting';
   const form = document.getElementById('vote-form');
   const submitButton = document.getElementById('vote-submit');
   const status = document.getElementById('vote-status');
+  const nameInput = document.getElementById('voter-name');
+  const noteInput = document.getElementById('voter-note');
   const totalElement = document.getElementById('vote-total');
   const totalLabel = document.getElementById('vote-total-label');
   const radioButtons = [...document.querySelectorAll('input[name="preferred-model"]')];
+  const voteDialog = document.getElementById('vote-dialog');
+  const voteDialogClose = document.getElementById('vote-dialog-close');
+  const voteDialogCancel = document.getElementById('vote-dialog-cancel');
+  const voteDialogChoice = document.getElementById('vote-dialog-choice');
+  const voteDialogStatus = document.getElementById('vote-dialog-status');
+  const voteDetailsForm = document.getElementById('vote-details-form');
+  const voteDialogSubmit = document.getElementById('vote-dialog-submit');
+  const adminDialog = document.getElementById('admin-dialog');
+  const adminAccessButton = document.getElementById('admin-access-button');
+  const adminCloseButton = document.getElementById('admin-close-button');
+  const adminLoginForm = document.getElementById('admin-login-form');
+  const adminPasswordInput = document.getElementById('admin-password');
+  const adminLoginStatus = document.getElementById('admin-login-status');
+  const adminReport = document.getElementById('admin-report');
+  const adminSummary = document.getElementById('admin-summary');
+  const adminVotesBody = document.getElementById('admin-votes-body');
+  const adminReportUpdated = document.getElementById('admin-report-updated');
+  const adminRefreshButton = document.getElementById('admin-refresh-button');
+  let activeAdminPassword = '';
 
-  if (!form || !submitButton || !status || !totalElement || !totalLabel) return;
+  if (!form || !submitButton || !status || !nameInput || !noteInput || !totalElement || !totalLabel) return;
 
-  const emptyState = { counts: { 1: 0, 2: 0, 3: 0 }, selected: null };
-  let voteState = loadVoteState();
+  function renderPublicTotal(total) {
+    const safeTotal = Math.max(0, Number(total) || 0);
+    totalElement.textContent = safeTotal;
+    totalLabel.textContent = safeTotal === 1 ? 'voto registrado' : 'votos registrados';
+  }
 
-  function loadVoteState() {
+  async function loadPublicTotal() {
     try {
-      const savedState = JSON.parse(localStorage.getItem(storageKey));
-      if (!savedState?.counts) return structuredClone(emptyState);
-
-      return {
-        counts: {
-          1: Math.max(0, Number(savedState.counts[1]) || 0),
-          2: Math.max(0, Number(savedState.counts[2]) || 0),
-          3: Math.max(0, Number(savedState.counts[3]) || 0)
-        },
-        selected: ['1', '2', '3'].includes(String(savedState.selected))
-          ? String(savedState.selected)
-          : null
-      };
+      const response = await fetch('/api/votes');
+      const result = await response.json();
+      if (!response.ok) throw new Error();
+      renderPublicTotal(result.total);
     } catch {
-      return structuredClone(emptyState);
+      totalElement.textContent = '—';
+      totalLabel.textContent = 'total indisponível';
     }
   }
 
-  function saveVoteState() {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(voteState));
-      return true;
-    } catch {
-      status.textContent = 'Não foi possível preservar o voto neste navegador.';
-      return false;
-    }
+  function updateSubmitState() {
+    const selectedRadio = radioButtons.find(radio => radio.checked);
+    submitButton.disabled = !selectedRadio;
   }
 
-  function renderResults() {
-    const total = Object.values(voteState.counts).reduce((sum, count) => sum + count, 0);
-    totalElement.textContent = total;
-    totalLabel.textContent = total === 1 ? 'voto' : 'votos';
-
-    ['1', '2', '3'].forEach(option => {
-      const result = document.querySelector(`[data-result="${option}"]`);
-      if (!result) return;
-
-      const count = voteState.counts[option];
-      const percentage = total ? Math.round((count / total) * 100) : 0;
-      result.querySelector('.vote-result-percent').textContent = `${percentage}%`;
-      result.querySelector('.vote-result-count').textContent = `${count} ${count === 1 ? 'voto' : 'votos'}`;
-      result.querySelector('.vote-result-bar').style.width = `${percentage}%`;
-      result.classList.toggle('is-leading', total > 0 && count === Math.max(...Object.values(voteState.counts)));
-      result.classList.toggle('is-selected', voteState.selected === option);
-    });
-  }
-
-  function selectSavedVote() {
-    const savedRadio = radioButtons.find(radio => radio.value === voteState.selected);
-    if (!savedRadio) return;
-
-    savedRadio.checked = true;
-    submitButton.textContent = 'Voto confirmado';
-    submitButton.disabled = true;
-    status.textContent = `Seu voto atual é o Modelo ${voteState.selected}. Você pode escolher outro para atualizar.`;
-  }
-
-  radioButtons.forEach(radio => {
-    radio.addEventListener('change', () => {
-      const isCurrentVote = radio.value === voteState.selected;
-      submitButton.disabled = isCurrentVote;
-      submitButton.textContent = voteState.selected ? 'Atualizar voto' : 'Confirmar voto';
-      status.textContent = isCurrentVote
-        ? `Seu voto atual é o Modelo ${voteState.selected}.`
-        : `Modelo ${radio.value} selecionado.`;
-    });
-  });
+  radioButtons.forEach(radio => radio.addEventListener('change', () => {
+    updateSubmitState();
+    status.textContent = `Modelo ${radio.value} selecionado. Clique em Confirmar voto.`;
+  }));
 
   form.addEventListener('submit', event => {
     event.preventDefault();
     const selectedRadio = radioButtons.find(radio => radio.checked);
     if (!selectedRadio) return;
 
-    if (voteState.selected) {
-      voteState.counts[voteState.selected] = Math.max(0, voteState.counts[voteState.selected] - 1);
-    }
-
-    voteState.selected = selectedRadio.value;
-    voteState.counts[voteState.selected] += 1;
-    saveVoteState();
-    renderResults();
-
-    submitButton.textContent = 'Voto confirmado';
-    submitButton.disabled = true;
-    status.textContent = `Obrigado! Seu voto no Modelo ${voteState.selected} foi registrado.`;
+    voteDetailsForm.reset();
+    voteDialogStatus.textContent = '';
+    voteDialogChoice.textContent = `Você selecionou o Modelo ${selectedRadio.value}.`;
+    voteDialog.showModal();
+    nameInput.focus();
   });
 
-  selectSavedVote();
-  renderResults();
+  function closeVoteDialog() {
+    if (!voteDialogSubmit.disabled) voteDialog.close();
+  }
+
+  voteDialogClose?.addEventListener('click', closeVoteDialog);
+  voteDialogCancel?.addEventListener('click', closeVoteDialog);
+  voteDialog?.addEventListener('click', event => {
+    if (event.target === voteDialog) closeVoteDialog();
+  });
+
+  voteDetailsForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const selectedRadio = radioButtons.find(radio => radio.checked);
+    if (!selectedRadio) {
+      voteDialog.close();
+      status.textContent = 'Selecione novamente uma opção para votar.';
+      return;
+    }
+
+    voteDialogSubmit.disabled = true;
+    voteDialogSubmit.textContent = 'Registrando...';
+    voteDialogStatus.textContent = 'Enviando seu voto com segurança.';
+
+    try {
+      const response = await fetch('/api/votes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: nameInput.value.trim(),
+          note: noteInput.value.trim(),
+          option: selectedRadio.value
+        })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Não foi possível registrar o voto.');
+
+      renderPublicTotal(result.total);
+      form.reset();
+      voteDetailsForm.reset();
+      voteDialog.close();
+      submitButton.textContent = 'Voto registrado';
+      status.textContent = `Obrigado, ${result.name}! Seu voto foi registrado.`;
+      setTimeout(() => {
+        submitButton.textContent = 'Confirmar voto';
+        updateSubmitState();
+      }, 1800);
+    } catch (error) {
+      voteDialogStatus.textContent = error.message;
+    } finally {
+      voteDialogSubmit.disabled = false;
+      voteDialogSubmit.textContent = 'Registrar voto';
+    }
+  });
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  async function loadAdminReport(password) {
+    adminLoginStatus.textContent = 'Carregando relatório...';
+    const response = await fetch('/api/votes', {
+      headers: { 'X-Admin-Password': password }
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Não foi possível abrir o relatório.');
+
+    activeAdminPassword = password;
+    adminSummary.innerHTML = result.summary.options.map(item => `
+      <article class="admin-summary-card opt-${item.option}">
+        <span>Modelo ${item.option}</span>
+        <strong>${item.count}</strong>
+        <small>${item.percentage}% dos votos</small>
+      </article>
+    `).join('') + `
+      <article class="admin-summary-card total">
+        <span>Total</span>
+        <strong>${result.summary.total}</strong>
+        <small>${result.summary.total === 1 ? 'participante' : 'participantes'}</small>
+      </article>
+    `;
+
+    adminVotesBody.innerHTML = result.votes.length
+      ? result.votes.map(vote => `
+          <tr>
+            <td>${escapeHtml(new Date(vote.createdAt).toLocaleString('pt-BR'))}</td>
+            <td><strong>${escapeHtml(vote.name)}</strong></td>
+            <td><span class="option-badge opt-${vote.option}">${vote.option}</span> Modelo ${vote.option}</td>
+            <td>${escapeHtml(vote.note || '—')}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="4" class="admin-empty-state">Nenhum voto registrado neste ambiente.</td></tr>';
+
+    adminLoginForm.hidden = true;
+    adminReport.hidden = false;
+    adminLoginStatus.textContent = '';
+    adminReportUpdated.textContent = `Atualizado em ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+  }
+
+  adminAccessButton?.addEventListener('click', () => {
+    adminLoginForm.hidden = false;
+    adminReport.hidden = true;
+    adminLoginStatus.textContent = '';
+    adminPasswordInput.value = '';
+    adminDialog.showModal();
+    adminPasswordInput.focus();
+  });
+
+  adminCloseButton?.addEventListener('click', () => adminDialog.close());
+  adminDialog?.addEventListener('click', event => {
+    if (event.target === adminDialog) adminDialog.close();
+  });
+
+  adminLoginForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    try {
+      await loadAdminReport(adminPasswordInput.value);
+    } catch (error) {
+      activeAdminPassword = '';
+      adminLoginStatus.textContent = error.message;
+      adminPasswordInput.select();
+    }
+  });
+
+  adminRefreshButton?.addEventListener('click', async () => {
+    try {
+      await loadAdminReport(activeAdminPassword);
+    } catch (error) {
+      adminLoginStatus.textContent = error.message;
+    }
+  });
+
+  loadPublicTotal();
 }
