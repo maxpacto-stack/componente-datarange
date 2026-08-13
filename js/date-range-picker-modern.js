@@ -68,8 +68,9 @@ export class DateRangePickerModern {
         <button type="button" class="modern-preset-btn" data-preset="last7">Últimos 7 dias</button>
         <button type="button" class="modern-preset-btn" data-preset="last14">Últimos 14 dias</button>
         <button type="button" class="modern-preset-btn" data-preset="last30">Últimos 30 dias</button>
-        <button type="button" class="modern-preset-btn" data-preset="thisMonth">Este mês</button>
         <button type="button" class="modern-preset-btn" data-preset="lastMonth">Mês passado</button>
+        <button type="button" class="modern-preset-btn" data-preset="thisMonth">Este mês</button>
+        <button type="button" class="modern-preset-btn" data-preset="nextMonth">Próximo mês</button>
         <button type="button" class="modern-preset-btn" data-preset="thisYear">Este ano</button>
         <button type="button" class="modern-preset-btn active" data-preset="custom">Personalizado</button>
       </aside>
@@ -385,7 +386,11 @@ export class DateRangePickerModern {
         break;
       case 'thisMonth':
         start = new Date(today.getFullYear(), today.getMonth(), 1);
-        end = today;
+        end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        break;
+      case 'nextMonth':
+        start = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+        end = new Date(today.getFullYear(), today.getMonth() + 2, 0);
         break;
       case 'lastMonth':
         const prevMonth = addMonths(today, -1);
@@ -394,7 +399,7 @@ export class DateRangePickerModern {
         break;
       case 'thisYear':
         start = new Date(today.getFullYear(), 0, 1);
-        end = today;
+        end = new Date(today.getFullYear(), 11, 31);
         break;
       case 'custom':
         this.hoverDate = null;

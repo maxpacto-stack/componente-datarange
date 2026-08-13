@@ -381,13 +381,43 @@
 .ds-footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 16px;
   padding: 14px 24px;
   border-top: 1px solid #E2E8F0;
   background: #ffffff;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
+}
+
+.ds-period-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-width: 0;
+  color: #64748B;
+  font-size: var(--font-size-xs);
+}
+
+.ds-period-summary strong {
+  color: #1E293B;
+  font-weight: 600;
+}
+
+.ds-period-summary .ds-period-count {
+  color: #0066FF;
+}
+
+.ds-period-separator {
+  color: #94A3B8;
+}
+
+.ds-footer-actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 16px;
 }
 
 .ds-btn-cancel {
@@ -429,6 +459,15 @@
     left: 50%;
     right: auto;
     transform: translateX(-50%);
+  }
+
+  .ds-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ds-footer-actions {
+    justify-content: flex-end;
   }
 
   .ds-body-content {

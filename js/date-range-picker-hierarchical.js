@@ -4,6 +4,7 @@ import {
   WEEKDAYS_INITIALS,
   formatDate,
   parseDate,
+  differenceInCalendarDays,
   isSameDay,
   isBeforeDay,
   isAfterDay,
@@ -139,8 +140,11 @@ export class DateRangePickerHierarchical {
 
       <!-- Footer Actions (Data Studio Style) -->
       <footer class="ds-footer">
-        <button type="button" class="ds-btn-cancel" id="ds-btn-cancel">Cancelar</button>
-        <button type="button" class="ds-btn-apply" id="ds-btn-apply">Aplicar</button>
+        <div class="ds-period-summary" id="ds-period-summary" aria-live="polite">Selecione o período</div>
+        <div class="ds-footer-actions">
+          <button type="button" class="ds-btn-cancel" id="ds-btn-cancel">Cancelar</button>
+          <button type="button" class="ds-btn-apply" id="ds-btn-apply">Aplicar</button>
+        </div>
       </footer>
     `;
   }
@@ -360,6 +364,28 @@ export class DateRangePickerHierarchical {
   renderView() {
     this.renderColumn('left');
     this.renderColumn('right');
+    this.updatePeriodSummary();
+  }
+
+  updatePeriodSummary() {
+    const summaryEl = this.popoverEl.querySelector('#ds-period-summary');
+    if (!summaryEl) return;
+
+    if (this.startDate && this.endDate) {
+      const totalDays = differenceInCalendarDays(this.startDate, this.endDate) + 1;
+      summaryEl.innerHTML = `
+        <span>Período:</span>
+        <strong>${formatDate(this.startDate)}</strong>
+        <span aria-hidden="true">➔</span>
+        <strong>${formatDate(this.endDate)}</strong>
+        <span class="ds-period-separator" aria-hidden="true">•</span>
+        <strong class="ds-period-count">${totalDays} ${totalDays === 1 ? 'dia' : 'dias'}</strong>
+      `;
+    } else if (this.startDate) {
+      summaryEl.innerHTML = `<span>Início:</span> <strong>${formatDate(this.startDate)}</strong>`;
+    } else {
+      summaryEl.textContent = 'Selecione o período';
+    }
   }
 
   renderColumn(side) {

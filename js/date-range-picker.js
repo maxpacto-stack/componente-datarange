@@ -89,8 +89,8 @@ export class DateRangePicker {
             <option value="thisYearFull">Este ano inteiro</option>
             <option value="lastYear">Ano passado</option>
             <option value="nextYear">Próximo ano</option>
-            <option value="customPast">Personalizado passados</option>
-            <option value="customFuture">Personalizado próximos</option>
+            <option value="customPast">Últimos</option>
+            <option value="customFuture">Próximos</option>
           </select>
           <select id="drp-quick-num" class="drp-select-input drp-select-number" aria-label="Quantidade" disabled>
             <option value="1">1</option>
