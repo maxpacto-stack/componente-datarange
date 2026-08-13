@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protótipo de Seletor de Intervalo de Datas</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/date-range-picker.css">
+  <link rel="stylesheet" href="./css/date-range-picker-modern.css">
+  <link rel="stylesheet" href="./css/date-range-picker-hierarchical.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Date range prototypes -->
+    <header class="app-header">
+      <!-- Filter controls row with clearly labeled Option 1, Option 2, Option 3 -->
+      <div class="filter-bar">
+        
+        <!-- OPÇÃO 1: Modelo Duplo Lado a Lado -->
+        <div class="filter-group">
+          <label class="filter-label" for="date-range-input">
+            <span class="option-badge opt-1">1</span> Modelo Duplo Lado a Lado
+          </label>
+          <div
+            class="date-trigger-wrapper"
+            id="date-range-trigger"
+            aria-controls="date-range-popover"
+            aria-expanded="false"
+          >
+            <div class="date-trigger-field model-one-trigger">
+              <input 
+                type="text" 
+                id="date-range-input" 
+                class="date-trigger-input" 
+                placeholder="dd/mm/aaaa | dd/mm/aaaa"
+                autocomplete="off"
+              />
+              <button
+                class="calendar-btn-icon"
+                type="button"
+                aria-label="Abrir calendário"
+                aria-haspopup="dialog"
+                aria-controls="date-range-popover"
+                aria-expanded="false"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </button>
+            </div>
+            <!-- Popover Container Opção 1 -->
+            <div id="date-range-popover"></div>
+          </div>
+        </div>
+
+        <!-- Campo Contextual: Faixa de Horário -->
+        <div class="filter-group">
+          <label class="filter-label">Faixa de horário</label>
+          <div class="time-field-wrapper">
+            <span class="time-spinner">
+              HH 
+              <span class="spinner-controls">▲<br>▼</span>
+            </span>
+            <span class="date-separator">:</span>
+            <span class="time-spinner">
+              MM 
+              <span class="spinner-controls">▲<br>▼</span>
+            </span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <!-- OPÇÃO 2: Modelo Moderno com Sidebar -->
+        <div class="filter-group" style="position: relative;">
+          <label class="filter-label">
+            <span class="option-badge opt-2">2</span> Modelo Moderno (Sidebar)
+          </label>
+          <div
+            class="modern-trigger-field"
+            id="date-range-trigger-modern"
+            aria-controls="date-range-popover-modern"
+            aria-expanded="false"
+          >
+            <button class="modern-trigger-icon modern-calendar-toggle" type="button" aria-label="Abrir calendário do Modelo Moderno" aria-haspopup="dialog" aria-controls="date-range-popover-modern">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </button>
+            <div class="modern-trigger-text">
+              <input class="modern-date-input" id="modern-start-input" type="text" inputmode="numeric" value="01/08/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data inicial do Modelo Moderno">
+              <span class="modern-arrow">➔</span>
+              <input class="modern-date-input" id="modern-end-input" type="text" inputmode="numeric" value="15/08/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data final do Modelo Moderno">
+            </div>
+            <span class="modern-trigger-chevron" aria-hidden="true">▼</span>
+          </div>
+          <!-- Popover Container Opção 2 -->
+          <div id="date-range-popover-modern"></div>
+        </div>
+
+        <!-- OPÇÃO 3: Modelo Hierárquico por Níveis -->
+        <div class="filter-group" style="position: relative;">
+          <label class="filter-label">
+            <span class="option-badge opt-3">3</span> Modelo Hierárquico (Níveis)
+          </label>
+          <div
+            class="modern-trigger-field"
+            id="date-range-trigger-h"
+            aria-controls="date-range-popover-h"
+            aria-expanded="false"
+            style="border-color: #0066FF; background: #EBF3FF;"
+          >
+            <button class="modern-trigger-icon modern-calendar-toggle" type="button" aria-label="Abrir calendário do Modelo Hierárquico" aria-haspopup="dialog" aria-controls="date-range-popover-h">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </button>
+            <div class="modern-trigger-text">
+              <input class="modern-date-input" id="hierarchical-start-input" type="text" inputmode="numeric" value="01/02/2025" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data inicial do Modelo Hierárquico">
+              <span class="modern-arrow">➔</span>
+              <input class="modern-date-input" id="hierarchical-end-input" type="text" inputmode="numeric" value="31/07/2026" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data final do Modelo Hierárquico">
+            </div>
+            <span class="modern-trigger-chevron" aria-hidden="true">▼</span>
+          </div>
+          <!-- Popover Container Opção 3 -->
+          <div id="date-range-popover-h"></div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Prototype preference voting -->
+    <section class="voting-card" aria-labelledby="voting-title">
+      <div class="voting-intro">
+        <div>
+          <span class="voting-eyebrow">Avaliação do protótipo</span>
+          <h1 class="voting-title" id="voting-title">Qual modelo você prefere?</h1>
+          <p class="voting-description">Experimente os seletores acima e escolha a opção mais simples para o seu dia a dia.</p>
+        </div>
+        <div class="voting-total" aria-live="polite">
+          <strong id="vote-total">0</strong>
+          <span id="vote-total-label">votos</span>
+        </div>
+      </div>
+
+      <form class="vote-form" id="vote-form">
+        <fieldset class="vote-options">
+          <legend class="sr-only">Escolha o melhor modelo</legend>
+
+          <label class="vote-option" data-option="1">
+            <input type="radio" name="preferred-model" value="1">
+            <span class="option-badge opt-1">1</span>
+            <span>
+              <strong>Modelo Duplo</strong>
+              <small>Calendários independentes</small>
+            </span>
+            <span class="vote-check" aria-hidden="true">✓</span>
+          </label>
+
+          <label class="vote-option" data-option="2">
+            <input type="radio" name="preferred-model" value="2">
+            <span class="option-badge opt-2">2</span>
+            <span>
+              <strong>Modelo Moderno</strong>
+              <small>Atalhos em painel lateral</small>
+            </span>
+            <span class="vote-check" aria-hidden="true">✓</span>
+          </label>
+
+          <label class="vote-option" data-option="3">
+            <input type="radio" name="preferred-model" value="3">
+            <span class="option-badge opt-3">3</span>
+            <span>
+              <strong>Modelo Hierárquico</strong>
+              <small>Navegação por níveis</small>
+            </span>
+            <span class="vote-check" aria-hidden="true">✓</span>
+          </label>
+        </fieldset>
+
+        <div class="vote-submit-row">
+          <span class="vote-status" id="vote-status" aria-live="polite">Selecione uma opção para votar.</span>
+          <button class="vote-submit" id="vote-submit" type="submit" disabled>Confirmar voto</button>
+        </div>
+      </form>
+
+      <div class="vote-results" id="vote-results" aria-label="Resultado da votação">
+        <div class="vote-result" data-result="1">
+          <div class="vote-result-heading">
+            <span><span class="option-badge opt-1">1</span> Modelo Duplo</span>
+            <strong><span class="vote-result-percent">0%</span> <small class="vote-result-count">0 votos</small></strong>
+          </div>
+          <div class="vote-result-track"><span class="vote-result-bar opt-1"></span></div>
+        </div>
+        <div class="vote-result" data-result="2">
+          <div class="vote-result-heading">
+            <span><span class="option-badge opt-2">2</span> Modelo Moderno</span>
+            <strong><span class="vote-result-percent">0%</span> <small class="vote-result-count">0 votos</small></strong>
+          </div>
+          <div class="vote-result-track"><span class="vote-result-bar opt-2"></span></div>
+        </div>
+        <div class="vote-result" data-result="3">
+          <div class="vote-result-heading">
+            <span><span class="option-badge opt-3">3</span> Modelo Hierárquico</span>
+            <strong><span class="vote-result-percent">0%</span> <small class="vote-result-count">0 votos</small></strong>
+          </div>
+          <div class="vote-result-track"><span class="vote-result-bar opt-3"></span></div>
+        </div>
+      </div>
+      <p class="voting-storage-note">Prévia local: nesta etapa, o voto e o resultado ficam salvos somente neste navegador.</p>
+    </section>
+
+    <!-- Demo Output & UX Inspection Panel -->
+    <section class="demo-card">
+      <div class="demo-title">
+        <span>📊</span> Painel de Testes & Saída de Dados (Opções 1, 2 e 3)
+      </div>
+      <p style="font-size: var(--font-size-sm); color: var(--text-secondary);">
+        Interaja com cada opção na barra de filtros para evoluir e ajustar suas funcionalidades de forma separada:
+      </p>
+      
+      <div class="outputs-grid">
+        <div>
+          <div style="font-size: var(--font-size-xs); font-weight: 700; color: #0066FF; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span class="option-badge opt-1">1</span> Output Opção 1
+          </div>
+          <pre class="json-output" id="json-output-display">{
+  "status": "Aguardando seleção...",
+  "startDate": null,
+  "endDate": null
+}</pre>
+        </div>
+
+        <div>
+          <div style="font-size: var(--font-size-xs); font-weight: 700; color: #0066FF; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span class="option-badge opt-2">2</span> Output Opção 2
+          </div>
+          <pre class="json-output" id="json-output-modern">{
+  "status": "Aguardando seleção...",
+  "startDate": null,
+  "endDate": null
+}</pre>
+        </div>
+
+        <div>
+          <div style="font-size: var(--font-size-xs); font-weight: 700; color: #0066FF; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span class="option-badge opt-3">3</span> Output Opção 3
+          </div>
+          <pre class="json-output" id="json-output-h">{
+  "status": "Aguardando seleção...",
+  "startDate": null,
+  "endDate": null
+}</pre>
+        </div>
+      </div>
+
+      <!-- Feature Comparison Cards -->
+      <div class="ux-features-grid">
+        <div class="ux-card">
+          <div class="ux-card-title">
+            <span class="option-badge opt-1">1</span> Opção 1: Modelo Duplo
+          </div>
+          <div class="ux-card-desc">
+            Baseado na referência enviada. Possui períodos rápidos, intervalos personalizados em dias, meses ou anos, navegação independente e edição direta do início à esquerda e do fim à direita.
+          </div>
+        </div>
+
+        <div class="ux-card">
+          <div class="ux-card-title">
+            <span class="option-badge opt-2">2</span> Opção 2: Modelo Moderno
+          </div>
+          <div class="ux-card-desc">
+            Padrão moderno SaaS/Airbnb. Painel lateral com atalhos fixos de um clique, gatilho em formato de badge com seta e contador de dias selecionados no rodapé.
+          </div>
+        </div>
+
+        <div class="ux-card">
+          <div class="ux-card-title">
+            <span class="option-badge opt-3">3</span> Opção 3: Modelo Hierárquico
+          </div>
+          <div class="ux-card-desc">
+            Cópia do seletor de período do Data Studio. Possui navegação progressiva em três níveis (Ano ➔ Mês ➔ Dia); clique no título do cabeçalho para alternar entre a grade de dias, 12 meses ou 24 anos.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- JavaScript Module App Initialization -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+@import './variables.css';
+
+/* Data Studio Date Range Picker Popover Container */
+.hierarchical-drp-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1100;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.22), 0 6px 12px -4px rgba(15, 23, 42, 0.12);
+  border: 1px solid #CBD5E1;
+  width: 650px;
+  display: none;
+  flex-direction: column;
+  overflow: visible; /* Needed for sub-menu flyouts */
+  user-select: none;
+  animation: popoverFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hierarchical-drp-popover.open {
+  display: flex;
+}
+
+/* 1. Top Dark Header Bar matching Data Studio */
+.ds-header-bar {
+  background: #242E38;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  position: relative;
+  z-index: 10;
+}
+
+.ds-header-title {
+  color: #ffffff;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+/* Custom Interactive Dropdown Button matching Data Studio */
+.ds-dropdown-wrapper {
+  position: relative;
+}
+
+.ds-dropdown-btn {
+  background: #242E38;
+  border: 1px solid #64748B;
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 6px 16px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color var(--transition-fast);
+}
+
+.ds-dropdown-btn:hover {
+  border-color: #94A3B8;
+}
+
+.ds-dropdown-btn .ds-arrow {
+  font-size: 9px;
+  color: #CBD5E1;
+}
+
+/* Main Dropdown Flyout Menu */
+.ds-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+  width: 190px;
+  padding: 6px 0;
+  display: none;
+  flex-direction: column;
+  z-index: 1200;
+}
+
+.ds-dropdown-menu.open {
+  display: flex;
+}
+
+/* Menu Items */
+.ds-menu-item {
+  padding: 8px 16px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: #1E293B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  transition: background var(--transition-fast);
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+}
+
+.ds-menu-item:hover {
+  background: #E2E8F0;
+  color: #0066FF;
+}
+
+.ds-menu-item.active {
+  font-weight: 700;
+  color: #0066FF;
+}
+
+.ds-submenu-arrow {
+  font-size: 9px;
+  color: #64748B;
+}
+
+/* Secondary Flyout Submenus (Matching Data Studio Images 1, 2, 3) */
+.ds-submenu {
+  position: absolute;
+  top: -6px;
+  left: 100%;
+  background: #ffffff;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+  width: 250px;
+  padding: 6px 0;
+  display: none;
+  flex-direction: column;
+  z-index: 1300;
+}
+
+.ds-menu-item.has-submenu:hover > .ds-submenu,
+.ds-menu-item.has-submenu:focus-within > .ds-submenu {
+  display: flex;
+}
+
+.ds-submenu-item {
+  padding: 8px 16px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: #1E293B;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+}
+
+.ds-submenu-item:hover {
+  background: #F1F5F9;
+  color: #0066FF;
+}
+
+/* 2. Main Content Container (Dual Columns) */
+.ds-body-content {
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.ds-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ds-col-title {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #1E293B;
+  text-align: center;
+}
+
+/* Nav Row: Month/Year Dropdown Title + Chevrons */
+.ds-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 6px;
+}
+
+.ds-nav-title-btn {
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #1E293B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+
+.ds-nav-title-btn:hover {
+  background: #F1F5F9;
+  color: #0066FF;
+}
+
+.ds-nav-title-btn .arrow {
+  font-size: 10px;
+  color: #64748B;
+}
+
+.ds-chevrons-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ds-chevron-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+
+.ds-chevron-btn:hover {
+  background: #F1F5F9;
+  color: #0066FF;
+}
+
+/* Days Grid & Weekdays */
+.ds-weekdays-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.ds-weekday {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: #94A3B8;
+}
+
+.ds-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 4px;
+}
+
+.ds-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: #1E293B;
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+
+.ds-day-cell.outside {
+  color: #CBD5E1;
+  pointer-events: none;
+}
+
+.ds-day-cell:not(.outside):hover {
+  background: #F1F5F9;
+}
+
+/* Start Date Pill and End Date Pill BOTH styled with the SAME solid blue highlight */
+.ds-day-cell.range-start,
+.ds-day-cell.range-end {
+  background: #0066FF !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 9999px !important;
+  box-shadow: 0 2px 6px rgba(0, 102, 255, 0.3);
+}
+
+/* In Range Middle Shading */
+.ds-day-cell.in-range {
+  background: #EBF3FF !important;
+  color: #0066FF !important;
+  font-weight: 600;
+  border-radius: 0 !important;
+}
+
+.ds-day-cell.hover-range {
+  background: #D6E4FF !important;
+  color: #0066FF !important;
+  border-radius: 0 !important;
+}
+
+/* Months Grid (4x3) */
+.ds-months-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px 8px;
+  padding: 16px 0;
+}
+
+.ds-month-cell {
+  padding: 10px 4px;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: #1E293B;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+
+.ds-month-cell:hover {
+  background: #EBF3FF;
+  color: #0066FF;
+}
+
+.ds-month-cell.selected {
+  background: #0066FF;
+  color: #ffffff;
+}
+
+/* Years Grid (4x6) */
+.ds-years-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 6px;
+  padding: 12px 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.ds-year-cell {
+  padding: 8px 12px;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: #1E293B;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+
+.ds-year-cell:hover {
+  background: #EBF3FF;
+  color: #0066FF;
+}
+
+.ds-year-cell.selected {
+  background: #0066FF;
+  color: #ffffff;
+}
+
+/* 3. Footer Bar matching Data Studio (Cancelar link + Dark Aplicar Pill) */
+.ds-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 14px 24px;
+  border-top: 1px solid #E2E8F0;
+  background: #ffffff;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.ds-btn-cancel {
+  background: none;
+  border: none;
+  color: #64748B;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.ds-btn-cancel:hover {
+  color: #1E293B;
+}
+
+.ds-btn-apply {
+  background: #242E38;
+  color: #ffffff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 9999px;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.ds-btn-apply:hover {
+  background: #0F172A;
+  box-shadow: 0 4px 12px rgba(36, 46, 56, 0.25);
+}
+
+@media (max-width: 720px) {
+  .hierarchical-drp-popover {
+    width: calc(100vw - 24px);
+    max-height: 78vh;
+    overflow-y: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  .ds-body-content {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .ds-dropdown-menu {
+    right: -8px;
+  }
+
+  .ds-submenu {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    padding-left: 12px;
+  }
+}
